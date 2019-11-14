@@ -1,0 +1,12 @@
+.Resizer.horizontal {
+  height: 24px;
+}
+.Resizer.horizontal::after {
+  content: '';
+  display: block;
+  height: 1px;
+  width: 24px;
+  border-radius: 1px;
+  border-top: 2px solid #e4e4e4;
+  border-bottom: 2px solid #e4e4e4;
+}

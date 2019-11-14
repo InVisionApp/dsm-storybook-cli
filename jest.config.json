@@ -1,0 +1,16 @@
+{
+  "verbose": true,
+  "coverageDirectory": "./coverage/",
+  "collectCoverage": true,
+  "collectCoverageFrom": [
+    "**/src/**/*.{js,jsx}",
+    "!**/config/**",
+    "!**/node_modules/**",
+    "!**/stories/**",
+    "!**/coverage/**",
+    "!**/docs/**"
+  ],
+  "globals": {
+    "before": {}
+  }
+}

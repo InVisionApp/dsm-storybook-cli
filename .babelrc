@@ -1,0 +1,30 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "entry",
+        "corejs": 3
+      }
+    ],
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "add-module-exports",
+    "@babel/proposal-class-properties",
+    [
+      "prismjs",
+      {
+        "languages": ["jsx"],
+        "plugins": ["line-numbers"],
+        "theme": "default",
+        "css": true
+      }
+    ]
+  ],
+  "env": {
+    "test": {
+      "presets": ["@babel/env", "@babel/preset-react"]
+    }
+  }
+}

@@ -1,0 +1,8 @@
+version: "3"
+services:
+  dsm-storybook:
+
+    ####################################################################
+    # Override run command for running tests
+    ####################################################################
+    command: ["npm", "run", "test"]

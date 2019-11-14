@@ -1,0 +1,15 @@
+.c-code-highlight__pre {
+  height: 100%;
+  margin: 0 !important;
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+.c-code-highlight__line-number {
+  display: inline-block;
+  user-select: none;
+  opacity: 0.5;
+  margin-right: 7px;
+  color: black;
+}
