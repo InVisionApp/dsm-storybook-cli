@@ -60,6 +60,16 @@ describe('StoriesOf basic analyzer tests (framework agnostic)', function() {
       analyzer(ast, testCase.storySource, testCase.sourceFile, 'unsupportedFW');
     });
   });
+
+  it('finds DSM story when named import storiesOf assigned to variable', function() {
+    const testCase = sources.getStoryWithNamedStoriesOfAssignedToVariable();
+    runTest(testCase);
+  });
+
+  it('finds DSM story when namespace import storybook.storiesOf assigned to variable', function() {
+    const testCase = sources.getStoryWithNamespaceStoriesOfAssignedToVariable();
+    runTest(testCase);
+  });
 });
 
 describe('StoriesOf import declarations', function() {

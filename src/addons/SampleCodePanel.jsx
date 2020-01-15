@@ -24,15 +24,12 @@ export default class SampleCodePanel extends React.Component {
     sampleCodeMetadata: null,
     // The actual sample code string
     sampleCode: '',
+    sampleCodeBuildFailed: false,
     docgenInfo: null
   };
 
   constructor(props) {
     super(props);
-    const { framework } = this.props;
-
-    // init once since framework is the same per storybook run
-    this.sampleCodeBuilder = getSampleCodeBuilder(framework);
 
     const { KNOBS_SET_EVENT } = getByVersion(resolvers.knobsSetEvent);
     const { onStoryChanged } = getByVersion(resolvers.onStoryChanged);
@@ -74,7 +71,7 @@ export default class SampleCodePanel extends React.Component {
 
   onHtmlSampleCodeChanged = ({ sampleCode }) => {
     const { prettierConfig } = this.state;
-    this.setState({ sampleCode: this.sampleCodeBuilder({ sampleCode }, prettierConfig) });
+    this.setState({ ...this.buildSampleCode({ sampleCode }, prettierConfig) });
   };
 
   onStorySelected = (storyData) => {
@@ -105,14 +102,29 @@ export default class SampleCodePanel extends React.Component {
     } else {
       this.setState({
         ...newState,
-        sampleCode: this.sampleCodeBuilder(
-          sampleCodeMetadata,
-          prettierConfig,
-          storyData.docgenInfo ? storyData.docgenInfo.props : {}
-        )
+        ...this.buildSampleCode(sampleCodeMetadata, prettierConfig, storyData.docgenInfo ? storyData.docgenInfo.props : {})
       });
     }
   };
+
+  buildSampleCode(sampleCodeMetadata, prettierConfiguration, propsInfo, knobs = null) {
+    const { framework } = this.props;
+    const sampleCodeBuilder = getSampleCodeBuilder(framework);
+
+    try {
+      return {
+        sampleCode: sampleCodeBuilder(sampleCodeMetadata, prettierConfiguration, propsInfo, knobs),
+        sampleCodeBuildFailed: false
+      };
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e);
+      return {
+        sampleCode: 'Failed to build sample code. Please contact support@invisionapp.com.',
+        sampleCodeBuildFailed: true
+      };
+    }
+  }
 
   getStoryMetadata() {
     previewDataApiClient
@@ -142,8 +154,7 @@ export default class SampleCodePanel extends React.Component {
       return;
     }
 
-    const sampleCode = this.sampleCodeBuilder(sampleCodeMetadata, prettierConfig, docgenInfo ? docgenInfo.props : {}, knobs);
-    this.setState({ sampleCode: sampleCode });
+    this.setState({ ...this.buildSampleCode(sampleCodeMetadata, prettierConfig, docgenInfo ? docgenInfo.props : {}, knobs) });
   };
 
   render() {
