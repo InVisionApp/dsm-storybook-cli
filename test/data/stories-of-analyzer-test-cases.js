@@ -327,3 +327,79 @@ exports.getStoryWithComplexInfoPropsInsideInDsm = function() {
     }
   };
 };
+
+exports.getStoryWithNamedStoriesOfAssignedToVariable = function() {
+  return {
+    sourceFile: path.basename(__filename),
+    storySource: `
+  import React from 'react';
+  import { storiesOf } from '@storybook/react';
+  import Icon from '../Icon';
+
+  const story = storiesOf('Icon', module);
+  
+  story
+    .add('default svg color', () => {
+      return <Icon glyph="type-symbol" />;
+    })
+    .add('inherit color', () => {
+      return (
+        <Icon color="pink" glyph="search" size={48} />
+      );
+    }, { 'in-dsm': { id: 'abc1', n: { nid: 6 } } });`,
+    expected: {
+      importDeclarations: [
+        { moduleName: '@storybook/react', bindings: ['storiesOf'] },
+        { moduleName: '../Icon', bindings: ['Icon'] },
+        { moduleName: 'react', bindings: ['React'] }
+      ],
+      stories: [
+        {
+          externalComponentId: 'abc1',
+          kind: 'Icon',
+          name: 'inherit color',
+          dsmInfo: { id: 'abc1', docgenInfo: undefined, n: { nid: 6 } },
+          frameworkMetadata: { returnStatement: '<Icon color="pink" glyph="search" size={48} />' }
+        }
+      ]
+    }
+  };
+};
+
+exports.getStoryWithNamespaceStoriesOfAssignedToVariable = function() {
+  return {
+    sourceFile: path.basename(__filename),
+    storySource: `
+  import React from 'react';
+  import * as storybook from '@storybook/react';
+  import Icon from '../Icon';
+
+  const story = storybook.storiesOf('Icon', module);
+  
+  story
+    .add('default svg color', () => {
+      return <Icon glyph="type-symbol" />;
+    })
+    .add('inherit color', () => {
+      return (
+        <Icon color="pink" glyph="search" size={48} />
+      );
+    }, { 'in-dsm': { id: 'abc1', n: { nid: 6 } } });`,
+    expected: {
+      importDeclarations: [
+        { moduleName: '@storybook/react', bindings: ['storybook'] },
+        { moduleName: '../Icon', bindings: ['Icon'] },
+        { moduleName: 'react', bindings: ['React'] }
+      ],
+      stories: [
+        {
+          externalComponentId: 'abc1',
+          kind: 'Icon',
+          name: 'inherit color',
+          dsmInfo: { id: 'abc1', docgenInfo: undefined, n: { nid: 6 } },
+          frameworkMetadata: { returnStatement: '<Icon color="pink" glyph="search" size={48} />' }
+        }
+      ]
+    }
+  };
+};

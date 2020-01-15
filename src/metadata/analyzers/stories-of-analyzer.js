@@ -1,10 +1,8 @@
 const traverse = require('@babel/traverse').default;
 const t = require('@babel/types');
-const STORIES_FIXTURE_METHOD_NAME = 'storiesOf';
 const getFrameworkAnalyzer = require('../framework-analyzers').getFrameworkAnalyzer;
 const resolveDsmInfo = require('../resolve-dsm-info');
 const validateDsmInfo = require('../validate-dsm-info');
-const ADD_STORY_METHOD_NAME = 'add';
 const {
   getDsmInfo,
   extractMetadata,
@@ -13,42 +11,87 @@ const {
   addRequireDeclaration
 } = require('./analyzer-utils');
 
+const ADD_STORY_METHOD_NAME = 'add';
+const STORIES_FIXTURE_METHOD_NAME = 'storiesOf';
+
 /**
  * Analyzer that analysis Storybook '.stories' files that are structured with the 'StoriesOf' format
  **/
 function analyze(ast, storyFileSource, storyFilePath, framework) {
   const dsmStoriesData = [];
   const importDeclarations = [];
+
+  // If we find a storiesOf assigned to a variable, we need to capture it. We store the name of the variable and map it
+  // to the storiesOf node in the AST. Later, we encounter `.add(...)` and need to find the name of the variable used at
+  // the beginning of the chain, if it exists. If we find a variable (instead of storiesOf), we reference this mapping
+  // and return the storiesOf node assigned to the variable.
+  const storiesOfVariableMap = {};
+
   traverse(ast, {
+    VariableDeclarator(path) {
+      const storiesOfAssignmentMapping = extractStoriesOfAssignment(path);
+
+      if (storiesOfAssignmentMapping) {
+        const { name, node } = storiesOfAssignmentMapping;
+        storiesOfVariableMap[name] = node;
+      }
+
+      // detect "require(...)"
+      addRequireDeclaration(path, importDeclarations);
+    },
     CallExpression(path) {
-      const story = extractDsmStoryData(path, storyFileSource, storyFilePath, framework);
+      const story = extractDsmStoryData(path, storyFileSource, storyFilePath, framework, storiesOfVariableMap);
       if (story) {
         dsmStoriesData.push(story);
       }
     },
     ImportDeclaration(path) {
       addImportDeclaration(path, importDeclarations);
-    },
-    // detect "require(...)"
-    VariableDeclarator(path) {
-      addRequireDeclaration(path, importDeclarations);
     }
   });
 
   return { importDeclarations, dsmStoriesData };
 }
 
-function extractDsmStoryData(path, storyFileSource, storyFilePath, framework) {
+/**
+ * const story = storiesOf(...)
+ * story.add(...)
+ *
+ * If users assign storiesOf(...) to a variable, we need to capture that variable assignment and storiesOf node so we
+ * can analyze it in `extractDsmStoryData`.
+ *
+ * We need to account for both named imports and namespace imports of `storiesOf`.
+ */
+function extractStoriesOfAssignment(path) {
+  const { node, scope } = path;
+  const isStoriesOfAssignment = isDirectStoriesOfUsage(node.init, scope);
+
+  if (isStoriesOfAssignment) {
+    // Get the name of the variable, and the storyOf node
+    const variableName = node.id.name;
+    const storiesOfNode = node.init;
+
+    return {
+      name: variableName,
+      node: storiesOfNode
+    };
+  }
+
+  return null;
+}
+
+function extractDsmStoryData(path, storyFileSource, storyFilePath, framework, storiesOfVariableMap) {
   // we're only working on ".add(...)"
   if (!t.isMemberExpression(path.node.callee)) {
     return;
   }
 
+  // Only search for story data if we are at the `add(...)` function in the AST
   if (path.node.callee.property.name !== ADD_STORY_METHOD_NAME) {
     return;
   }
 
-  const storiesOf = findStoriesOf(path.node, path.scope);
+  const storiesOf = findStoriesOf(path.node, path.scope, storiesOfVariableMap);
   if (!storiesOf) {
     // encountered a "add()" method call, but it wasn't part of the storiesOf().add chain
     return;
@@ -97,32 +140,49 @@ function getKind(node) {
   return null;
 }
 
-function findStoriesOf(node, scope) {
-  if (t.isCallExpression(node) && isCalleeStoriesOf(node.callee, scope)) {
+/**
+ * Search for the storiesOf node recursively through the tree, starting at the `... .add()` tree.
+ */
+function findStoriesOf(node, scope, storiesOfVariableMap) {
+  if (isVariableStoriesOfUsage(node, storiesOfVariableMap)) {
+    return storiesOfVariableMap[node.name];
+  } else if (isDirectStoriesOfUsage(node, scope)) {
     return node;
   } else if (t.isCallExpression(node)) {
-    return findStoriesOf(node.callee, scope);
+    return findStoriesOf(node.callee, scope, storiesOfVariableMap);
   } else if (t.isMemberExpression(node)) {
-    return findStoriesOf(node.object, scope);
+    return findStoriesOf(node.object, scope, storiesOfVariableMap);
   } else {
     return null;
   }
+}
+
+function isVariableStoriesOfUsage(node, storiesOfVariableMap) {
+  return t.isIdentifier(node) && storiesOfVariableMap[node.name];
+}
+
+function isDirectStoriesOfUsage(node, scope) {
+  return t.isCallExpression(node) && isCalleeStoriesOf(node.callee, scope);
 }
 
 function isCalleeStoriesOf(node, scope) {
   return isNamedImportStoriesOfUsage(node) || isNamespaceImportStoriesOfUsage(node, scope);
 }
 
-// `import { storiesOf } from '@storybook/react'`
-// ...
-// storiesOf(...)
+/**
+ * `import { storiesOf } from '@storybook/react'`
+ * ...
+ * storiesOf(...)
+ */
 function isNamedImportStoriesOfUsage(node) {
   return t.isIdentifier(node) && node.name === STORIES_FIXTURE_METHOD_NAME;
 }
 
-// `import * as storybook from '@storybook/react'`
-// ...
-// storybook.storiesOf(...)
+/**
+ * `import * as storybook from '@storybook/react'`
+ * ...
+ * storybook.storiesOf(...)
+ */
 function isNamespaceImportStoriesOfUsage(node, scope) {
   return (
     t.isMemberExpression(node) &&

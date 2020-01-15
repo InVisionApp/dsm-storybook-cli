@@ -1,3 +1,4 @@
+// 'vue-template-compiler' is coming from 'vue-docgen-api' package as a dependency of it
 // AST https://ktsn.github.io/vue-ast-explorer/
 // template explorer: https://template-explorer.vuejs.org
 const compiler = require('vue-template-compiler');
