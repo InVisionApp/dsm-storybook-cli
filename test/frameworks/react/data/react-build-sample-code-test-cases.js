@@ -258,7 +258,12 @@ exports.getStoryWithArrayOfObjectsProp = function() {
         }
       }
     },
-    expected: `<Nav tabs={[{ num: 1, string: "one" }, { num: 2, string: "two" }]} />;
+    expected: `<Nav
+  tabs={[
+    { num: 1, string: "one" },
+    { num: 2, string: "two" }
+  ]}
+/>;
 `
   };
 };

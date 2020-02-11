@@ -53,6 +53,7 @@ function extractReturnStatement(bodyNode, storyFileSource) {
   }
 
   const returnBody = returnStatements[0].argument;
+
   return storySource.substring(returnBody.start, returnBody.end);
 }
 

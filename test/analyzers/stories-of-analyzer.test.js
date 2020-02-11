@@ -5,6 +5,7 @@ const parser = require('../../src/metadata/parser');
 const analyzer = require('../../src/metadata/analyzer');
 const sources = require('../data/stories-of-analyzer-test-cases');
 const userMessages = require('../../src/user-messages');
+const { FileType } = require('../../src/metadata/utils/parser-constants');
 
 /**
  * In the analyzer tests we are using the react-framework-analyzer by default
@@ -102,8 +103,16 @@ describe('StoriesOf Fixed client issues - React', function() {
   });
 });
 
-function runTest(testCase) {
-  const ast = parser(testCase.storySource);
+describe('StoriesOf TypeScript Story', function() {
+  it('parses TypeScript correctly and collects metadata', function() {
+    const testCase = sources.getStoryWrittenInTypeScript();
+    runTest(testCase, FileType.TYPESCRIPT);
+  });
+});
+
+function runTest(testCase, type = FileType.JAVASCRIPT) {
+  const ast = parser(testCase.storySource, type);
   const result = analyzer(ast, testCase.storySource, testCase.sourceFile, DEFAULT_FRAMEWORK);
+
   expect(result).to.equalInAnyOrder(testCase.expected);
 }

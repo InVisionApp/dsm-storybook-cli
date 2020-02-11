@@ -41,8 +41,11 @@ function hasValidProgramBody(ast) {
   }
 
   const firstNode = get(ast, 'program.body[0]');
+  return t.isExpressionStatement(firstNode) && isJSXNode(firstNode);
+}
 
-  return t.isExpressionStatement(firstNode) && (t.isJSXElement(firstNode.expression) || t.isJSXFragment(firstNode.expression));
+function isJSXNode(node) {
+  return t.isJSXElement(node.expression) || t.isJSXFragment(node.expression);
 }
 
 // By default, we search for the top level custom component (== starts with an uppercase letter).

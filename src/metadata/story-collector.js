@@ -5,8 +5,9 @@ const analyzeFile = require('./analyzer');
 const logger = require('../cli/cli-logger');
 const userMessages = require('../user-messages');
 const isEmpty = require('lodash/isEmpty');
+const getParserType = require('./utils/get-parser-type');
 
-const DEFAULT_STORIES_SOURCE_PATH = 'src/stories/**/*.js';
+const DEFAULT_STORIES_SOURCE_PATH = 'src/**/*.stories.{js,jsx,ts,tsx}';
 
 function getStorySourceFiles(pathGlob) {
   const paths = glob.sync(pathGlob);
@@ -30,8 +31,10 @@ function getAst(src, path) {
   if (!src) {
     return null;
   }
+
   try {
-    return parseFile(src);
+    const parserType = getParserType(path);
+    return parseFile(src, parserType);
   } catch (e) {
     const message = userMessages.failedToParseStorySourceFile(path);
     logger.error(message, e, { storyFilePath: path, storySourceCode: src });

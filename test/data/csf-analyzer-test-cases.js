@@ -354,3 +354,63 @@ exports.getStoryWithComplexInfoPropsInsideInDsm = function() {
     }
   };
 };
+
+exports.getStoryWrittenInTypeScript = function() {
+  return {
+    sourceFile: path.basename(__filename),
+    storySource: `
+    import React from 'react';
+    import { withKnobs, boolean, select, text } from '@storybook/addon-knobs';
+    import { action } from '@storybook/addon-actions';    
+    import Button from './Button';
+
+    export default {
+      title: 'Button',
+      parameters: {
+        component: Button,
+        decorators: [withKnobs],
+        'in-dsm': { id: 'abc1', versionFilePath: '../components/versionFile.json' }
+      }
+    };
+    
+    type IconOptions = {
+      none: null;
+      'chevron-right': 'chevron-right';
+    };
+    
+    const iconOptions: IconOptions = { none: null, 'chevron-right': 'chevron-right' };
+    
+    export const simpleButton = () => {
+      return (
+        <Button
+          onClick={() => action('Button clicked')('Click')}
+          icon={select('icon', iconOptions, iconOptions.none)}
+          disabled={boolean('disabled', false)}
+        >
+          {text('children', 'TEXT')}
+        </Button>
+      );
+    };
+    `,
+    expected: {
+      importDeclarations: [
+        { moduleName: 'react', bindings: ['React'] },
+        { moduleName: '@storybook/addon-knobs', bindings: ['select', 'withKnobs', 'boolean', 'text'] },
+        { moduleName: '@storybook/addon-actions', bindings: ['action'] },
+        { moduleName: './Button', bindings: ['Button'] }
+      ],
+      stories: [
+        {
+          externalComponentId: 'abc1',
+          kind: 'Button',
+          name: 'Simple Button',
+          dsmInfo: { id: 'abc1', versionFilePath: '../components/versionFile.json', docgenInfo: undefined },
+          frameworkMetadata: {
+            returnStatement:
+              "<Button\n          onClick={() => action('Button clicked')('Click')}\n          icon={select('icon', iconOptions, iconOptions.none)}\n          disabled={boolean('disabled', false)}\n        >\n          {text('children', 'TEXT')}\n        </Button>"
+          }
+        }
+      ]
+    }
+  };
+};
