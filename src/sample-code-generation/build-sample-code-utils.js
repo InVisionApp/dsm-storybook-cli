@@ -23,13 +23,13 @@ function hasKnobValue(field, knobs) {
     return false;
   }
 
-  return knobs.hasOwnProperty(field.knobLabel) && hasValueSet(knobs[field.knobLabel]);
+  return Object.prototype.hasOwnProperty.call(knobs, field.knobLabel) && hasValueSet(knobs[field.knobLabel]);
 }
 
 // A field descriptor (both in knobs and in our props / children schema) that has no value set doesn't have a 'value' field.
 // Checking the existence of this field and not a falsy value of the field since falsy values are also acceptable default values.
 function hasValueSet(item, knobs) {
-  return item.hasOwnProperty('value') || (knobs && hasKnobValue(item, knobs));
+  return Object.prototype.hasOwnProperty.call(item, 'value') || (knobs && hasKnobValue(item, knobs));
 }
 
 function isDefaultValue(prop, currentValue) {

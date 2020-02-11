@@ -403,3 +403,57 @@ exports.getStoryWithNamespaceStoriesOfAssignedToVariable = function() {
     }
   };
 };
+
+exports.getStoryWrittenInTypeScript = function() {
+  return {
+    sourceFile: path.basename(__filename),
+    storySource: `
+  import React from 'react';
+  import { storiesOf } from '@storybook/react';
+  import { object, withKnobs } from '@storybook/addon-knobs';
+  import Nav from './Nav';
+
+  const navWrapper = (storyFn: any) => <div style={{ backgroundColor: 'white', padding: 25 }}>{storyFn()}</div>;
+  
+  type Tab = {
+    id: string;
+    title: string;
+  };
+  
+  storiesOf('Nav', module)
+    .addDecorator(withKnobs)
+    .addDecorator(navWrapper)
+    .add(
+      'Nav',
+      () => {
+        const tabs: Array<Tab> = [
+          { id: '1', title: 'one' },
+          { id: '2', title: 'two' },
+          { id: '3', title: 'three' }
+        ];
+  
+        return <Nav tabs={object('tabs', tabs)} initialActiveTab="1" />;
+      },
+      {
+        'in-dsm': { id: 'abc1' }
+      }
+    );`,
+    expected: {
+      importDeclarations: [
+        { moduleName: '@storybook/react', bindings: ['storiesOf'] },
+        { moduleName: 'react', bindings: ['React'] },
+        { moduleName: '@storybook/addon-knobs', bindings: ['object', 'withKnobs'] },
+        { moduleName: './Nav', bindings: ['Nav'] }
+      ],
+      stories: [
+        {
+          externalComponentId: 'abc1',
+          kind: 'Nav',
+          name: 'Nav',
+          dsmInfo: { id: 'abc1', docgenInfo: undefined },
+          frameworkMetadata: { returnStatement: `<Nav tabs={object('tabs', tabs)} initialActiveTab="1" />` }
+        }
+      ]
+    }
+  };
+};

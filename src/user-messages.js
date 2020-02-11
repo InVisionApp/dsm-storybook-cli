@@ -19,11 +19,10 @@ const messages = {
     `Could not determine project root directory, package.json not found. Please ensure to run the command from the project root.`,
   verifyingCliVersion: (localVersion) => `Verifying dsm-storybook version (${localVersion}) is valid...`,
   unknownStorybookVersion: () =>
-    `Could not detect dsm-storybook version. Please verify your setup. For further assistance visit (${
-      ACTION_MESSAGES.TROUBLESHOOT_URL
-    }).`,
+    `Could not detect dsm-storybook version. Please verify your setup. For further assistance visit (${ACTION_MESSAGES.TROUBLESHOOT_URL}).`,
   verifyingOrganizationSubscription: (organization) => `Verifying ${organization} subscription...`,
-  storybookBuildFailed: () => `Failed to build Storybook. For further assistance visit (${ACTION_MESSAGES.TROUBLESHOOT_URL}).`,
+  storybookBuildFailed: () =>
+    `Failed to build Storybook. For more details, try to run "build-storybook". For further assistance visit (${ACTION_MESSAGES.TROUBLESHOOT_URL}).`,
   assetUploadComplete: () => 'Asset upload complete.',
   updatingDsm: () => 'updating DSM...',
   unmatchedComponentContainerIds: () =>
@@ -41,9 +40,7 @@ const messages = {
   uploadError: (fileName) => `Upload failed: ${fileName}`,
   previewServerStarted: (port) => `DSM storybook preview-data server is listening on port: ${port}`,
   enterpriseGating: () =>
-    `Publishing stories to DSM is only available on the DSM Enterprise plan. Visit ${
-      ACTION_MESSAGES.DSM_PLANS_URL
-    } to learn more.`,
+    `Publishing stories to DSM is only available on the DSM Enterprise plan. Visit ${ACTION_MESSAGES.DSM_PLANS_URL} to learn more.`,
   subscriptionVerificationFailed: (organization) =>
     `Could not verify ${organization} subscription plan. Please check your connection.`,
   cliVersionVerificationFailed: () => 'Could not verify @invisionapp/dsm-storybook version. Please check your connection',
@@ -99,9 +96,7 @@ const messages = {
   failedToReadStorybookConfigFile: (path) => `Failed to read Storybook config file "${path}"`,
   failedToParseStorybookConfigFile: () => `Failed to parse Storybook config file.`,
   providedFrameworkIsIncorrect: (framework) =>
-    `The framework '${framework}' provided from '.dsmrc' file is incorrect. Make sure you written it correctly inside the '.dsmrc' file. For further assistance visit ${
-      ACTION_MESSAGES.TROUBLESHOOT_URL
-    }`,
+    `The framework '${framework}' provided from '.dsmrc' file is incorrect. Make sure you written it correctly inside the '.dsmrc' file. For further assistance visit ${ACTION_MESSAGES.TROUBLESHOOT_URL}`,
   usingFrameworkFromConfiguration: (framework) => `Using framework '${framework}' from '.dsmrc' configuration file`,
   moreThanOneStorybookFrameworkDetected: () =>
     `More than 1 Storybook UI framework dependencies detected. You can set the UI framework you want to use explicitly inside the '.dsmrc' file or make sure only 1 '@storybook/<framework>' is inside the 'package.json' file.`,
