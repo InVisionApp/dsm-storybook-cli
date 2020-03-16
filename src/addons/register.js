@@ -16,7 +16,8 @@ import {
   HTML_SAMPLE_CODE_CHANGED_EVENT,
   KNOBS_SET_EVENT as DSM_KNOBS_SET_EVENT,
   INIT_DSM_REGISTERED_EVENT,
-  INIT_DSM_EVENT
+  INIT_DSM_EVENT,
+  DSM_STORYBOOK_START_EVENT
 } from './constants';
 
 export function registerDsm(envVariable) {
@@ -39,6 +40,12 @@ export function registerDsm(envVariable) {
 
     if (isInDsmContext()) {
       injectCss();
+
+      channel.on(`${DSM_STORYBOOK_START_EVENT}`, () => {
+        notifyDsm({
+          eventName: DSM_STORYBOOK_START_EVENT
+        });
+      });
 
       channel.on(STORY_SELECTED_EVENT, (data) => {
         notifyDsm(data);

@@ -5,7 +5,7 @@ import withDsm from './with-dsm';
 import getDsmOptions from './dsm-options';
 import { get } from 'lodash';
 import { setConfiguration, isInDsmContext } from '../services/configuration';
-import { INIT_DSM_EVENT, INIT_DSM_REGISTERED_EVENT } from './constants';
+import { INIT_DSM_EVENT, INIT_DSM_REGISTERED_EVENT, DSM_STORYBOOK_START_EVENT } from './constants';
 import { getByVersion, resolvers } from './versions';
 
 /**
@@ -46,6 +46,10 @@ const initDsm = (params) => {
 
   // Inform the register code that we are listening to the INIT_DSM_EVENT
   channel.emit(`${INIT_DSM_REGISTERED_EVENT}`);
+
+  // Inform DSM that we have started configuring the addon. This triggers an error
+  // timer in DSM where we wait for storybook content to load.
+  channel.emit(`${DSM_STORYBOOK_START_EVENT}`);
 };
 
 /**
