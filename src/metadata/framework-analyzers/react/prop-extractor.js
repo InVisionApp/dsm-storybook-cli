@@ -1,6 +1,5 @@
-const fs = require('fs-extra');
-const reactDocGen = require('react-docgen');
 const isUndefined = require('lodash/isUndefined');
+const { getDocgenInfo } = require('./get-docgen-info');
 
 /**
  * Attempt to extract prop definitions and add them as a "props" property on "dsmInfo"
@@ -10,9 +9,7 @@ function extract(componentFilePath) {
     return;
   }
 
-  const src = fs.readFileSync(componentFilePath, 'utf8');
-  const docgenInfo = reactDocGen.parse(src, null, null, { filename: componentFilePath });
-
+  const docgenInfo = getDocgenInfo(componentFilePath);
   return normalizeDocgenInfo(docgenInfo);
 }
 
