@@ -176,7 +176,7 @@ exports.getStoryWithPropertyAndEventBinding = function() {
       name: 'simple usage, no knobs',
       dsmInfo: { id: 'ac3545' },
       frameworkMetadata: {
-        storyTemplate: `<my-button [type]="selectedType" (click)="onStart" tooltip="click me">start</my-button>`
+        storyTemplate: `<my-button [type]="selectedType" (click)="onStart()" tooltip="click me">start</my-button>`
       },
       importDeclarations: [{ moduleName: '@storybook/angular', bindings: ['storiesOf'] }]
     },
@@ -184,7 +184,7 @@ exports.getStoryWithPropertyAndEventBinding = function() {
       componentName: 'my-button',
       props: [
         { name: '[type]', value: 'selectedType' },
-        { name: '(click)', value: 'onStart' },
+        { name: '(click)', value: 'onStart()' },
         { name: 'tooltip', value: 'click me' }
       ],
       children: [{ value: 'start' }],
@@ -209,7 +209,7 @@ exports.getStoryWithTwoWayBinding = function() {
     expected: {
       componentName: 'my-input',
       props: [{ name: '[(value)]', value: 'username' }],
-      children: [{ value: 'start' }],
+      children: [],
       sourceTemplate: '__DSM_INJECTED_SOURCE__'
     }
   };
@@ -304,7 +304,7 @@ exports.getStoryWithKnobInProp = function() {
     },
     expected: {
       componentName: 'my-button',
-      props: [{ name: 'text', knobLabel: 'button text', value: 'Hello NG Button' }],
+      props: [{ name: '[text]', knobLabel: 'button text', value: 'Hello NG Button' }],
       children: [],
       sourceTemplate: '__DSM_INJECTED_SOURCE__'
     }
@@ -390,6 +390,36 @@ exports.getStorySelfClosingTagInChildren = function() {
       componentName: 'my-button',
       props: [],
       children: [{ value: '<hr>' }, { value: '<input>' }, { value: '<img>' }, { value: '<div></div>' }],
+      sourceTemplate: '__DSM_INJECTED_SOURCE__'
+    }
+  };
+};
+
+exports.getStoryWithAllTemplateBindingsAndKnobs = function() {
+  return {
+    metadata: {
+      externalComponentId: 'ac3545',
+      kind: 'MyButton',
+      name: 'with knobs',
+      dsmInfo: { id: 'ac3545' },
+      frameworkMetadata: {
+        storyTemplate: `<my-button [(status)]="statusKnob" [text]="textKnob" tooltip="click me">{{buttonText}}</my-button>`,
+        storyLevelProps:
+          "{ buttonText: text('button text', 'Hello NG Button'), textKnob: text('text', 'This is a notification message'), statusKnob: text('text', 'success') }"
+      },
+      importDeclarations: [
+        { moduleName: '@storybook/angular', bindings: ['storiesOf'] },
+        { moduleName: '@storybook/addon-knobs', bindings: ['withKnobs', 'text'] }
+      ]
+    },
+    expected: {
+      componentName: 'my-button',
+      props: [
+        { name: 'tooltip', value: 'click me' },
+        { name: '[(status)]', value: 'success', knobLabel: 'text' },
+        { name: '[text]', value: 'This is a notification message', knobLabel: 'text' }
+      ],
+      children: [{ knobLabel: 'button text', value: 'Hello NG Button' }],
       sourceTemplate: '__DSM_INJECTED_SOURCE__'
     }
   };
