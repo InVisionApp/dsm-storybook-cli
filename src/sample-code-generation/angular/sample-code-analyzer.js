@@ -51,28 +51,68 @@ module.exports = function(storyMetadata, logger) {
 function getProps(storySubject, storyLevelPropsWithKnobs) {
   const { attributes, inputs, outputs } = storySubject;
 
-  const props = attributes.map((attribute) => {
-    // special handling for directives
-    if (!attribute.valueSpan) {
-      return { name: attribute.name };
+  const attributeProps = attributes.map(mapAttributeToProp);
+  const { inputProps, outputProps } = getBoundProperties(inputs, outputs, storyLevelPropsWithKnobs);
+
+  return [...attributeProps, ...inputProps, ...outputProps];
+}
+
+function mapAttributeToProp(attribute) {
+  if (!attribute.valueSpan) {
+    return { name: attribute.name };
+  }
+  return {
+    name: attribute.name,
+    value: attribute.value
+  };
+}
+
+function getBoundProperties(inputs, outputs, storyLevelPropsWithKnobs) {
+  const inputPropsByName = getInputPropsByName(inputs, storyLevelPropsWithKnobs);
+
+  const outputProps = outputs.reduce((mappedOutputs, output) => {
+    const outputProp = extractOutputPropValue(output);
+    const outputType = getOutputEventType(output);
+    const normalizedName = normalizeTwoWayBoundOutputName(output.name);
+
+    // Angular outputs are generated multiple ways:
+    // 1. MethodCall: Explicitly defined as an @Output in the component
+    // 2. PropertyWrite: Automatically created as a result of a two-way bound prop
+    //
+    // If we find an output that results from a PropertyWrite, we want to mutate
+    // the matching Input entry rather than creating a new Output entry.
+    switch (outputType) {
+      case 'MethodCall':
+        mappedOutputs.push(outputProp);
+        break;
+      case 'PropertyWrite':
+        // Check for a matching Input entry since PropertyWrite comes from a
+        // two-way binding.
+        if (isTwoWayBoundOutputCandidate(output.name, normalizedName, inputPropsByName)) {
+          const matchedInput = inputPropsByName.get(normalizedName);
+          matchedInput.name = `[(${normalizedName})]`;
+        }
+        break;
     }
-    return {
-      name: attribute.name,
-      value: attribute.value
-    };
-  });
 
-  // handle property binding, which will be in "inputs" array
+    return mappedOutputs;
+  }, []);
+
+  return {
+    inputProps: [...inputPropsByName.values()],
+    outputProps
+  };
+}
+
+function getInputPropsByName(inputs, storyLevelPropsWithKnobs) {
+  const inputPropsByName = new Map();
+
   inputs.forEach((input) => {
-    props.push(extractInputPropValue(input, storyLevelPropsWithKnobs));
+    const inputProp = extractInputPropValue(input, storyLevelPropsWithKnobs);
+    inputPropsByName.set(input.name, inputProp);
   });
 
-  // handle event binding, which will be in "outputs" array
-  outputs.forEach((output) => {
-    props.push({ name: `(${output.name})`, value: output.handler.source });
-  });
-
-  return props;
+  return inputPropsByName;
 }
 
 function findBindingToStoryPropWithKnob(storyPropName, storyLevelPropsWithKnobs) {
@@ -81,26 +121,44 @@ function findBindingToStoryPropWithKnob(storyPropName, storyLevelPropsWithKnobs)
   });
 }
 
+function isTwoWayBoundOutputCandidate(name, normalizedName, inputPropsByName) {
+  return name.endsWith('Change') && inputPropsByName.has(normalizedName);
+}
+
+function normalizeTwoWayBoundOutputName(name) {
+  return name.replace('Change', '');
+}
+
+function getOutputEventType(output) {
+  return output.handler.ast.constructor.name;
+}
+
+function extractOutputPropValue(output) {
+  return { name: `(${output.name})`, value: output.handler.source };
+}
+
 function extractInputPropValue(input, storyLevelPropsWithKnobs) {
   const valueSource = _.get(input, 'value.source');
   if (getNodeType(input) !== 'BoundAttribute') {
     return { name: input.name, value: valueSource };
   }
 
+  const boundName = `[${input.name}]`;
+
   // we have a prop with binding (BoundAttribute)
   const boundPropKnobsInfo = findBindingToStoryPropWithKnob(valueSource, storyLevelPropsWithKnobs);
   if (boundPropKnobsInfo) {
     return {
-      name: input.name,
+      name: boundName,
       value: boundPropKnobsInfo.value,
       knobLabel: boundPropKnobsInfo.knobLabel
     };
-  } else {
-    return {
-      name: `[${input.name}]`,
-      value: valueSource
-    };
   }
+
+  return {
+    name: boundName,
+    value: valueSource
+  };
 }
 
 function getSourceTemplate(storyTemplate, storySubject) {

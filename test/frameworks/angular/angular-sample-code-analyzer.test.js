@@ -53,13 +53,15 @@ describe('Angular sample code analyzer', function() {
     runTest(storyTestCase);
   });
 
-  /**
-   * 2 way binding is not supported at the moment in sample code (it will look differently in the sample code output)
-   */
-  // it('story with 2 way binding', function() {
-  //   const storyTestCase = sources.getStoryWithTwoWayBinding();
-  //   runTest(storyTestCase);
-  // });
+  it('story with 2 way binding', function() {
+    const storyTestCase = sources.getStoryWithTwoWayBinding();
+    runTest(storyTestCase);
+  });
+
+  it('story with 2 way binding, 1 way binding, and attribute', function() {
+    const storyTestCase = sources.getStoryWithAllTemplateBindingsAndKnobs();
+    runTest(storyTestCase);
+  });
 
   it('story with a knob for the component content', function() {
     const storyTestCase = sources.getSimpleStoryWithKnobInChildren();

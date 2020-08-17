@@ -1,4 +1,6 @@
 const rp = require('request-promise');
+const path = require('path');
+const fs = require('fs');
 
 const { CLI_CLIENT_NAME } = require('../cli/constants');
 const defaultHeaders = { 'Request-Source': CLI_CLIENT_NAME };
@@ -25,6 +27,24 @@ class RequestPromiseHttpClient {
       // the https traffic over http
       if (options.tunnel !== undefined) {
         requestOptions.tunnel = options.tunnel;
+      }
+    }
+
+    if (options.ca) {
+      let cert = null;
+      try {
+        cert = fs.readFileSync(path.resolve(options.ca));
+        if (cert) {
+          requestOptions.agentOptions = {
+            ca: cert
+          };
+        } else {
+          this.logger.error(`The CERT "${options.ca}" is empty`);
+          process.exit(1);
+        }
+      } catch (e) {
+        this.logger.error(`Failed to read CERT "${options.ca}"`, e);
+        process.exit(1);
       }
     }
 
