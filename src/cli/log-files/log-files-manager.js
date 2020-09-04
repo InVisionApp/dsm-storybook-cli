@@ -3,23 +3,20 @@ const path = require('path');
 const fs = require('fs-extra');
 const rimraf = require('rimraf');
 const { get } = require('lodash');
-const { getStorybookConfigPath } = require('../storybook-config-validations/get-storybook-config-path');
 const { resolveFromComponentPath } = require('../../metadata/component-locator');
 
 const LOGS_FOLDER = 'logs';
 
 let initialized = false;
 let options = {};
-let customArgs = {};
 let LOGS_PATH;
 let STORYBOOK_CONFIGURATION_PATH;
 const CONFIG_DIRECTORY_FILES = [];
 
-function initializeLogManager(appConfigurations, appCustomArgs) {
+function initializeLogManager(appConfigurations) {
   options = appConfigurations;
-  customArgs = appCustomArgs;
   LOGS_PATH = path.resolve(options.appDirectory, options.outputDir, LOGS_FOLDER);
-  const { storybookConfigPath } = getStorybookConfigPath(customArgs);
+  const { storybookConfigPath } = options;
   if (storybookConfigPath) {
     STORYBOOK_CONFIGURATION_PATH = path.resolve(options.appDirectory, storybookConfigPath, '../*');
     const configDirectoryFilesPaths = glob.sync(STORYBOOK_CONFIGURATION_PATH);

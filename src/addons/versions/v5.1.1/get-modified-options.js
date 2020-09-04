@@ -1,7 +1,7 @@
 const getModifiedOptions = (panelsAvailable) => {
   return {
     fullscreen: {
-      showPanel: false
+      showPanel: true
     },
     normal: {
       showPanel: panelsAvailable

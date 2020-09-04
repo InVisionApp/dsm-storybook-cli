@@ -28,7 +28,7 @@ function objectExpressionToJsObject(node, throwOnUnknownTypes = true, accumulato
     } else if (t.isIdentifier(prop.value)) {
       accumulator[key] = prop.value.name;
     } else if (t.isObjectExpression(prop.value)) {
-      accumulator[key] = objectExpressionToJsObject(prop.value);
+      accumulator[key] = objectExpressionToJsObject(prop.value, throwOnUnknownTypes);
     } else if (throwOnUnknownTypes) {
       throw new Error(userMessage.failedToParseInDsmInformation(key, prop.value.type));
     }

@@ -56,8 +56,13 @@ function handleError(msg, allowFailure, error) {
   logger.warning(msg);
 }
 
-async function performRunnerValidations(apiClient, options, customArgs = '', allowFailure = false) {
-  validateStorybookConfigJs(options.storybookVersion, customArgs);
+async function performRunnerValidations(apiClient, options, allowFailure = false) {
+  validateStorybookConfigJs({
+    storybookVersion: options.storybookVersion,
+    storybookConfigPath: options.storybookConfigPath,
+    storybookConfigFolderPath: options.storybookConfigFolderPath,
+    isUsingDeclarativeConfiguration: options.isUsingDeclarativeConfiguration
+  });
   await validateCliVersion(apiClient, options, allowFailure);
   await validateOrganizationSubscription(apiClient, options, allowFailure);
 }

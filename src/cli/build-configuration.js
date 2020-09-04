@@ -8,6 +8,8 @@ const getStorybookVersionsInfo = require('./storybook-version-locator');
 const getStorybookFramework = require('./storybook-framework-detector');
 const loadJsonConfigurationFromFile = require('./json-file-utils');
 const { getInstalledPackagePath, CWD_NODE_MODULES_DIRECTORY } = require('./resolve-node-modules');
+const { getStorybookConfigPath } = require('./get-storybook-config-path');
+const { isUsingDeclarativeConfiguration } = require('./is-using-declarative-configuration');
 
 const STORYBOOK_MODULE_NAME = '@storybook';
 const DSM_STORYBOOK_MODULE_NAME = '@invisionapp/dsm-storybook';
@@ -21,7 +23,7 @@ const configurationKeys = {
 
 let loadedConfiguration = null;
 
-function create(commandlineOptions) {
+function create(commandlineOptions, customArgs) {
   if (loadedConfiguration) {
     logger.error(userMessages.configurationAlreadyLoaded());
     process.exit(1);
@@ -40,6 +42,7 @@ function create(commandlineOptions) {
   const storybookFramework = getStorybookFramework(storybookDependencies, configuration);
   const dsmStorybookVersion = getDsmStorybookPackageVersion();
   const prettierConfiguration = getPrettierConfiguration(appDirectory, packageJson.pkg);
+  const { storybookConfigPath, storybookConfigFolderPath } = getStorybookConfigPath(customArgs);
 
   const appConfiguration = {
     logInformation: { packageJson, dsmRcConfiguration: configuration },
@@ -50,7 +53,10 @@ function create(commandlineOptions) {
     storybookFramework: storybookFramework.name,
     storybookVersion: storybookFramework.version,
     dsmStorybookVersion,
-    prettierConfiguration
+    prettierConfiguration,
+    storybookConfigPath,
+    storybookConfigFolderPath,
+    isUsingDeclarativeConfiguration: isUsingDeclarativeConfiguration(storybookConfigPath)
   };
 
   const environmentConfiguration = loadEnvironmentVariables();

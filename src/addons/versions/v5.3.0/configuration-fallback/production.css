@@ -1,0 +1,35 @@
+button[title='Change orientation'] {
+  display: none;
+}
+
+button[title='Go full screen'] {
+  display: none;
+}
+
+button[title='Open canvas in new tab'] {
+  display: none;
+}
+
+/**
+Hide Zoom toolbar buttons until we find a fix (they are not working in DSM ATM) DSM-2329.
+**/
+
+button[title='Zoom in'] {
+  display: none;
+}
+
+button[title='Zoom out'] {
+  display: none;
+}
+
+button[title='Reset zoom'] {
+  display: none;
+}
+
+button[title='Reset zoom'] + span {
+  display: none;
+}
+
+button[title='Copy canvas link'] {
+  display: none;
+}

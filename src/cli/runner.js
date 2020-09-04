@@ -30,7 +30,7 @@ shortid.characters(shortIdCharsList);
 async function publish(options, customArgs) {
   const apiClient = new ApiClient(options, logger);
   initializeLogManager(options, customArgs);
-  await performRunnerValidations(apiClient, options, customArgs);
+  await performRunnerValidations(apiClient, options);
 
   const storiesMetadata = storyCollector.collect(options);
   validateMetadata(storiesMetadata, true);
@@ -85,7 +85,7 @@ async function preview(options, customArgs, previewOptions) {
 
   initializeLogManager(options, customArgs);
   const warnOnly = true;
-  await performRunnerValidations(apiClient, options, customArgs, warnOnly);
+  await performRunnerValidations(apiClient, options, warnOnly);
 
   const storyFilesMetadata = storyCollector.collect(options);
   validateMetadata(storyFilesMetadata);

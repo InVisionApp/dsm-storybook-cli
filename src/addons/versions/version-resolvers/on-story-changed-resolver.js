@@ -7,7 +7,7 @@ export default (storybookVersion) => {
     return v4_0_0;
   }
 
-  if (semver.satisfies(storybookVersion, '^5.1.1')) {
+  if (semver.satisfies(storybookVersion, '^5.1.1 || ^6.0.0')) {
     return v5_1_1;
   }
 };

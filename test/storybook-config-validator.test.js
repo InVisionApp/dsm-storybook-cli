@@ -61,6 +61,7 @@ describe('configure validations in config.js', function() {
 });
 
 function runTest({ version, sourceCode }) {
-  const ast = parse(sourceCode);
-  return runValidations(ast, `-c ./dummy-path.js`, version);
+  const configAst = parse(sourceCode);
+  const configPath = `-c ./dummy-path.js`;
+  return runValidations({ configAst, configPath, storybookVersion: version });
 }

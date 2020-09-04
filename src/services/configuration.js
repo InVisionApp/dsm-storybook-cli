@@ -6,7 +6,8 @@ const environmentKeys = {
   authToken: 'DSM_AUTH_TOKEN',
   previewServerPort: 'DSM_PREVIEW_SERVER_PORT',
   storybookFramework: 'STORYBOOK_FRAMEWORK',
-  storybookVersion: 'STORYBOOK_VERSION'
+  storybookVersion: 'STORYBOOK_VERSION',
+  isUsingDeclarativeConfiguration: 'IS_USING_DECLARATIVE_CONFIGURATION'
 };
 
 let runConfiguration = null;
