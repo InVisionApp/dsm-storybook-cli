@@ -1,7 +1,7 @@
 const validations = require('./validations');
 
-function runValidations(configAst, configPath, storybookVersion) {
-  validations.forEach((runValidations) => runValidations({ configAst, configPath, storybookVersion }));
+function runValidations(storybookOptions) {
+  validations.forEach((runValidations) => runValidations(storybookOptions));
 }
 
 module.exports = runValidations;

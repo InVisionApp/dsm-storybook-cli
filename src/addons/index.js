@@ -2,7 +2,7 @@ import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 import addons from '@storybook/addons';
 import withDsm from './with-dsm';
-import getDsmOptions from './dsm-options';
+import getOptions, { getDsmOptions, getDsmTheme } from './dsm-options';
 import { get } from 'lodash';
 import { setConfiguration, isInDsmContext } from '../services/configuration';
 import { INIT_DSM_EVENT, INIT_DSM_REGISTERED_EVENT, DSM_STORYBOOK_START_EVENT } from './constants';
@@ -38,7 +38,7 @@ const initDsm = (params) => {
 
     const { applyOptions } = getByVersion(resolvers.applyOptions);
 
-    return getDsmOptions(optionsSettings)
+    return getOptions(optionsSettings)
       .then((dsmOptions) => applyOptions(params, dsmOptions))
       .then(() => addDecorator(withDsm))
       .then(() => callback());
@@ -64,10 +64,9 @@ const isInStoryViewMode = () => {
     // In case exception is thrown when trying to get parent location it means we are embedded in an iframe and blocked
     // from accessing it the parent OR in other case that is blocking us from it.
   }
-
   // If failed to get parent location we will try to validate the current window is under '.inVision' host
   const host = get(window, 'location.host');
   return /\.invision/i.test(host);
 };
 
-export { initDsm };
+export { initDsm, getDsmOptions, getDsmTheme, withDsm };

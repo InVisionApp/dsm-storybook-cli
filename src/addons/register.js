@@ -8,7 +8,6 @@ import injectCss from './inject-css';
 import notifyDsm from '../services/notify-dsm';
 import SampleCodePanel from './SampleCodePanel';
 import { setConfiguration, getByEnvKey, environmentKeys, isInDsmContext } from '../services/configuration';
-import { getDisplayMode } from './register-utils';
 import { getByVersion, resolvers } from './versions';
 import {
   DSM_ADDON_NAME,
@@ -19,6 +18,7 @@ import {
   INIT_DSM_EVENT,
   DSM_STORYBOOK_START_EVENT
 } from './constants';
+import { optionsSettings, isLocalPreview } from './dsm-options';
 
 export function registerDsm(envVariable) {
   addons.register(DSM_ADDON_NAME, (api) => {
@@ -26,11 +26,6 @@ export function registerDsm(envVariable) {
     setConfiguration(envVariable);
 
     const channel = addons.getChannel();
-
-    const optionsSettings = {
-      displayMode: getDisplayMode(),
-      panelsAvailable: (isInDsmContext() && arePanelsAvailable()) || isLocalPreview()
-    };
 
     // We need to pass the envVariable also to the window of storybook preview app, but since the InitDsm code runs after this code,
     // We first wait for an event that says the InitDsm code ran and is listening to the event that is emitted with the environment variable data.
@@ -41,11 +36,19 @@ export function registerDsm(envVariable) {
     if (isInDsmContext()) {
       injectCss();
 
-      channel.on(`${DSM_STORYBOOK_START_EVENT}`, () => {
+      const isUsingDeclarativeConfiguration = getByEnvKey(environmentKeys.isUsingDeclarativeConfiguration);
+
+      if (isUsingDeclarativeConfiguration) {
         notifyDsm({
           eventName: DSM_STORYBOOK_START_EVENT
         });
-      });
+      } else {
+        channel.on(DSM_STORYBOOK_START_EVENT, () => {
+          notifyDsm({
+            eventName: DSM_STORYBOOK_START_EVENT
+          });
+        });
+      }
 
       channel.on(STORY_SELECTED_EVENT, (data) => {
         notifyDsm(data);
@@ -74,14 +77,4 @@ export function registerDsm(envVariable) {
       }
     }
   });
-}
-
-function isLocalPreview() {
-  return !getByEnvKey(environmentKeys.dsmProdEnvironment);
-}
-
-function arePanelsAvailable() {
-  const { getStorybookPanels } = getByVersion(resolvers.getStorybookPanels);
-  const panels = getStorybookPanels();
-  return Object.keys(panels).length > 0;
 }

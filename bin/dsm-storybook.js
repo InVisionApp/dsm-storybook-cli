@@ -64,7 +64,7 @@ function getConfigurations() {
   const options = optionsFromArgs();
 
   const customArgs = cliUtils.getCustomArgs(program).join(' ');
-  const configuration = buildConfiguration.create(options);
+  const configuration = buildConfiguration.create(options, customArgs);
 
   return {
     customArgs,

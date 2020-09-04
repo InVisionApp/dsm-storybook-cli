@@ -317,6 +317,48 @@ exports.getStoryWithComplexInfoProps = function() {
   };
 };
 
+exports.getStoryWithComplexInfoPropsInStory = function() {
+  return {
+    sourceFile: path.basename(__filename),
+    storySource: `
+  import React from 'react';
+  import { action } from '@storybook/addon-actions';
+  import Button from '../components/Button';
+  import Container from '../Container';
+  import { withKnobs } from '@storybook/addon-knobs';
+
+  export const button = () => <Button onClick={action('clicked')}>Button Test 5</Button>;
+  
+  button.story = {
+    name: 'A Button',
+    parameters: { component: Button, info: { propTablesExclude: [Container] }, decorators: [withKnobs], 'in-dsm': { id: 'storyId' } }
+  }
+
+  export default {
+    title: 'Something|SB Button/Doc/Lol'
+  };`,
+    expected: {
+      importDeclarations: [
+        { moduleName: '@storybook/addon-actions', bindings: ['action'] },
+        { moduleName: 'react', bindings: ['React'] },
+        { moduleName: '../components/Button', bindings: ['Button'] },
+        { moduleName: '../Container', bindings: ['Container'] },
+        { moduleName: '@storybook/addon-knobs', bindings: ['withKnobs'] }
+      ],
+      stories: [
+        {
+          externalComponentId: 'storyId',
+          kind: 'Something|SB Button/Doc/Lol',
+          name: 'Button',
+          displayName: 'A Button',
+          dsmInfo: { id: 'storyId', docgenInfo: undefined },
+          frameworkMetadata: { returnStatement: `<Button onClick={action('clicked')}>Button Test 5</Button>` }
+        }
+      ]
+    }
+  };
+};
+
 exports.getStoryWithComplexInfoPropsInsideInDsm = function() {
   return {
     sourceFile: path.basename(__filename),

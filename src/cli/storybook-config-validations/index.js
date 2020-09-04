@@ -1,12 +1,11 @@
 const { getConfigSourceCode } = require('./utils');
-const { getStorybookConfigPath } = require('./get-storybook-config-path');
 const parse = require('../../metadata/parser');
 const runValidations = require('./run-validations');
 const logger = require('../cli-logger');
 const userMessages = require('../../user-messages');
 
-function validateStorybookConfigJs(storybookVersion, customArgs) {
-  const { storybookConfigPath, storybookConfigFolderPath } = getStorybookConfigPath(customArgs);
+function validateStorybookConfigJs(storybookOptions) {
+  const { storybookConfigPath, storybookConfigFolderPath, storybookVersion, isUsingDeclarativeConfiguration } = storybookOptions;
   if (!storybookConfigPath) {
     logger.error(userMessages.failedToReadStorybookConfigFile(storybookConfigFolderPath));
     return;
@@ -22,7 +21,7 @@ function validateStorybookConfigJs(storybookVersion, customArgs) {
     return;
   }
 
-  runValidations(configAst, storybookConfigPath, storybookVersion);
+  runValidations({ configAst, configPath: storybookConfigPath, storybookVersion, isUsingDeclarativeConfiguration });
 }
 
 function parseConfigSourceCode(configSourceCode) {

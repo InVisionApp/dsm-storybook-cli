@@ -10,7 +10,7 @@ module.exports = function(storybookVersion) {
   }
 
   // to support pre-released versions of Storybook from v5.1.0-alpha.23 and above
-  if (semver.satisfies(storybookVersion, '^5.1.0-alpha.23')) {
+  if (semver.satisfies(storybookVersion, '^5.1.0-alpha.23 || ^6.0.0')) {
     return v5_1_1;
   }
 };

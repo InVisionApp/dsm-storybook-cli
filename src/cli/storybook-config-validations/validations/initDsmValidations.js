@@ -3,7 +3,12 @@ const userMessages = require('../../../user-messages');
 const { getByVersion, resolvers } = require('../../../versions');
 const { getCallExpressionsToValidate } = require('../utils');
 
-function initDsmValidations({ configAst, configPath, storybookVersion }) {
+function initDsmValidations({ configAst, configPath, storybookVersion, isUsingDeclarativeConfiguration }) {
+  // We don't use `initDsm` with the declarative configuration
+  if (isUsingDeclarativeConfiguration) {
+    return;
+  }
+
   const initDsmCallExpressions = getCallExpressionsToValidate(configAst, 'initDsm');
   if (initDsmCallExpressions.length > 1) {
     logger.error(userMessages.moreThanOneCallToInitDsm(configPath));

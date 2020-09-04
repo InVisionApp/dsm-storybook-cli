@@ -24,7 +24,8 @@ function buildStorybook(options, customArgs) {
     [environmentKeys.dsmProdEnvironment]: true,
     [environmentKeys.dsmHost]: options.dsmHost,
     [environmentKeys.storybookFramework]: options.storybookFramework,
-    [environmentKeys.storybookVersion]: options.storybookVersion
+    [environmentKeys.storybookVersion]: options.storybookVersion,
+    [environmentKeys.isUsingDeclarativeConfiguration]: options.isUsingDeclarativeConfiguration
   };
   const outputDir = path.join(options.outputDir, STORYBOOK_BUILD_FOLDER);
 
@@ -39,7 +40,8 @@ function runStorybook(options, customArgs, previewServerPort) {
     [environmentKeys.previewServerPort]: previewServerPort,
     [environmentKeys.dsmHost]: options.dsmHost,
     [environmentKeys.storybookFramework]: options.storybookFramework,
-    [environmentKeys.storybookVersion]: options.storybookVersion
+    [environmentKeys.storybookVersion]: options.storybookVersion,
+    [environmentKeys.isUsingDeclarativeConfiguration]: options.isUsingDeclarativeConfiguration
   };
 
   const cmd = buildCommand(runConfiguration, options.nodeModulesPath, 'start-storybook', customArgs);

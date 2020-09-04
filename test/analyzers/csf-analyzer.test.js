@@ -60,6 +60,11 @@ describe('CSF Fixed client issues - React', function() {
     runTest(testCase);
   });
 
+  it('story complex info object with unknown types inside in-dsm (array expressions)', function() {
+    const testCase = sources.getStoryWithComplexInfoPropsInStory();
+    runTest(testCase);
+  });
+
   it('story complex info object that we do not support inside in-dsm.', function() {
     const testCase = sources.getStoryWithComplexInfoPropsInsideInDsm();
     assert.throws(() => {

@@ -1,7 +1,7 @@
 const getModifiedOptions = (panelsAvailable) => {
   return {
     fullscreen: {
-      showAddonPanel: false,
+      showAddonPanel: true,
       theme: { mainBorder: '' }
     },
     normal: {
