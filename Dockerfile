@@ -10,7 +10,7 @@ RUN npm install
 # Copy our source files to the service location
 COPY src ./src
 COPY test ./test
-COPY .babelrc .eslintrc .prettierrc jest.config.json ./
+COPY .babelrc .eslintrc .prettierrc jest.config.json dangerfile.js ./
 
 # Copy the files required for npm pack (see package.json files section)
 COPY config ./config
