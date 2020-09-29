@@ -76,7 +76,7 @@
       "bluebird": "3.5.5",
       "chai": "4.2.0",
       "child_process": "1.0.2",
-      "codecov": "3.3.0",
+      "codecov": "3.7.1",
       "css-loader": "2.0.2",
       "danger": "10.4.0",
       "deep-equal-in-any-order": "1.0.13",
