@@ -3,6 +3,7 @@ import { fetchOptions } from './remote-resources';
 import { getByVersion, resolvers } from './versions';
 import { getDisplayMode } from './register-utils';
 import { setConfiguration, getByEnvKey, environmentKeys, isInDsmContext } from '../services/configuration';
+import { ModuleNotFoundError } from '../services/version-resolvers-errors';
 
 export default function getOptions(optionsSettings) {
   return fetchOptions().then((options) => {
@@ -23,6 +24,13 @@ export const optionsSettings = {
 
 export const getDsmOptions = (envVariable) => {
   setConfiguration(envVariable);
+
+  // A user is running `storybook` instead of `dsm-storybook`. Running `storybook` will not
+  // populate the environment variable.
+  if (!isInDsmContext()) {
+    return {};
+  }
+
   const { defaultOptions } = getByVersion(resolvers.getConfigurationFallback);
   const options = defaultOptions(getByEnvKey(environmentKeys.dsmProdEnvironment));
   const modifiedOptions = getModifiedOptions(optionsSettings);
@@ -35,6 +43,23 @@ export const getDsmOptions = (envVariable) => {
 
 export const getDsmTheme = (envVariable) => {
   setConfiguration(envVariable);
+
+  // A user is running `storybook` instead of `dsm-storybook`. Running `storybook` will not
+  // populate the environment variable. Storybook will break if it tries to apply an "empty"
+  // theme, so we return the Storybook default theme.
+  if (!isInDsmContext()) {
+    const requireTheming = () => {
+      try {
+        return require('@storybook/theming');
+      } catch (e) {
+        throw new ModuleNotFoundError('@storybook/theming');
+      }
+    };
+
+    const { themes } = requireTheming();
+    return themes.light;
+  }
+
   const { defaultTheme } = getByVersion(resolvers.getConfigurationFallback);
   return defaultTheme;
 };

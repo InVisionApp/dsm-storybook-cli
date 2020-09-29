@@ -49,14 +49,17 @@ function replaceBySourceFile(src, sourceFile, asset, baseUrl) {
   const fileRegexPattern = `\\.?\\/?${asset.fileName}`;
   const fileReplaceValue = `${baseUrl}${asset.fileName}`;
 
+  // catch "url(<FileName>)" in CSS & in <style> tags inside JS files. the url() can be wrapped with ' \ " or nothing
+  // url(fonts/MyFont.woff) / url('fonts/MyFont.woff') / url("fonts/MyFont.woff")
+  const urlRegex = `(url\\(\\\\?(?:'|")?)(${fileRegexPattern})(\\\\?(?:'|")?\\))`;
+  let alteredSrc = src.replace(RegExp(urlRegex, 'gi'), `$1${fileReplaceValue}$3`);
+
   if (STYLE_EXTENSIONS.test(sourceFile)) {
-    // catch "url(<FileName>)" in CSS files. the url() can be wrapped with ' \ " or nothing
-    // url(fonts/MyFont.woff) / url('fonts/MyFont.woff') / url("fonts/MyFont.woff")
-    return src.replace(RegExp(`(\\()('|")?(${fileRegexPattern})('|")?(\\))`, 'gi'), `(${fileReplaceValue})`);
+    return alteredSrc;
   }
 
   // Replace either "assetFileName" or "/assetFileName" (for files that are located in a nested folder)
-  return src.replace(RegExp(`"${fileRegexPattern}"`, 'gi'), `"${fileReplaceValue}"`);
+  return alteredSrc.replace(RegExp(`"${fileRegexPattern}"`, 'gi'), `"${fileReplaceValue}"`);
 }
 
 function shouldTransformAsset(src, file, asset) {
@@ -78,4 +81,6 @@ function isSelfReference(fileName1, fileName2) {
   return fileName1 === fileName2;
 }
 
-module.exports = transformAssetUrls;
+const transformModule = (module.exports = transformAssetUrls);
+
+transformModule.replaceBySourceFile = replaceBySourceFile;

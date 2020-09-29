@@ -4,7 +4,14 @@ const registerDsm = require('./dist/register').registerDsm;
 // the user is using the new or legacy configuration method
 // in Storybook. dsm-storybook cli knows which method the user
 // is using, so we pass it here via the STORYBOOK_DSM env var.
-const DSM_CONFIG = JSON.parse(process.env.STORYBOOK_DSM);
+let DSM_CONFIG;
+
+try {
+  DSM_CONFIG = JSON.parse(process.env.STORYBOOK_DSM);
+} catch (e) {
+  DSM_CONFIG = {};
+}
+
 const isUsingDeclarativeConfiguration = DSM_CONFIG.IS_USING_DECLARATIVE_CONFIGURATION;
 
 // The new configuration method requires `register.js` to execute
