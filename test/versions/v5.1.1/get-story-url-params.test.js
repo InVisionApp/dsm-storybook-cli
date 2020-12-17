@@ -23,9 +23,54 @@ describe('story url params', function() {
     const result = getStoryUrlParams('kind', 'name (parenthesis)');
     assert.equal(result.path, '/story/kind--name-parenthesis');
   });
+});
 
-  it('kind with multi-separator returns dashed kind', function() {
-    const result = getStoryUrlParams('level1|level2|level3/level4/kind', 'name (parenthesis)');
-    assert.equal(result.path, '/story/level1-level2-level3-level4-kind--name-parenthesis');
+describe('story url params with canvas as default tab', function() {
+  const defaultTab = false;
+
+  it('plain kind returns kind', function() {
+    const result = getStoryUrlParams('kind', 'name', defaultTab);
+    assert.equal(result.path, '/story/kind--name');
+  });
+
+  it('kind with hierarchy returns path without hierarchy', function() {
+    const result = getStoryUrlParams('level1/kind', 'name', defaultTab);
+    assert.equal(result.path, '/story/level1-kind--name');
+  });
+
+  it('kind with grouping returns path without grouping', function() {
+    const result = getStoryUrlParams('level1|kind', 'name', defaultTab);
+    assert.equal(result.path, '/story/level1-kind--name');
+  });
+
+  // smoke test that we're running through the sanitizer
+  it('story name with special characters returns sanitized name', function() {
+    const result = getStoryUrlParams('kind', 'name (parenthesis)', defaultTab);
+    assert.equal(result.path, '/story/kind--name-parenthesis');
+  });
+});
+
+describe('story url params with docs as default tab', function() {
+  const defaultTab = true;
+
+  it('plain kind returns kind', function() {
+    const result = getStoryUrlParams('kind', 'name', defaultTab);
+    assert.equal(result.path, '/docs/kind--name');
+  });
+
+  it('kind with hierarchy returns path without hierarchy', function() {
+    const result = getStoryUrlParams('level1/kind', 'name', defaultTab);
+    assert.equal(result.path, '/docs/level1-kind--name');
+  });
+
+  it('kind with grouping returns path without grouping', function() {
+    const result = getStoryUrlParams('level1|kind', 'name', defaultTab);
+    assert.equal(result.path, '/docs/level1-kind--name');
+  });
+
+  // smoke test that we're running through the sanitizer
+  it('story name with special characters returns sanitized name', function() {
+    const result = getStoryUrlParams('kind', 'name (parenthesis)', defaultTab);
+    assert.equal(result.path, '/docs/kind--name-parenthesis');
   });
 });

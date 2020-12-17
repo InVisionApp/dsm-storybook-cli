@@ -1,6 +1,7 @@
 const DSM_ADDON_NAME = 'invision-dsm';
 const DSM_INFO_OBJECT_KEY = 'in-dsm';
 const STORY_SELECTED_EVENT = `${DSM_ADDON_NAME}/on_story_selected`;
+const STORY_CONTENT_LOADED = `${DSM_ADDON_NAME}/on_story_content_loaded`;
 const HTML_SAMPLE_CODE_CHANGED_EVENT = `${DSM_ADDON_NAME}/on_html_sample_code_changed`;
 const INIT_DSM_REGISTERED_EVENT = `${DSM_ADDON_NAME}/on_init_dsm_registered`;
 const INIT_DSM_EVENT = `${DSM_ADDON_NAME}/on_init_dsm`;
@@ -19,6 +20,7 @@ module.exports = {
   DSM_INFO_OBJECT_KEY,
   DSM_STORYBOOK_START_EVENT,
   STORY_SELECTED_EVENT,
+  STORY_CONTENT_LOADED,
   HTML_SAMPLE_CODE_CHANGED_EVENT,
   INIT_DSM_REGISTERED_EVENT,
   INIT_DSM_EVENT,
