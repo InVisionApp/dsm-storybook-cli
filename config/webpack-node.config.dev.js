@@ -7,7 +7,7 @@ const webpackConfigBase = require('./webpack-node.config.base');
 const devWebpackConfig = {
   devtool: false,
   plugins: [
-    new WebpackShellPlugin({ dev: false, onBuildEnd: ['yalc publish --no-sig --force --push'] }),
+    new WebpackShellPlugin({ dev: false, onBuildEnd: ['yalc publish --yarn --no-sig --force --push'] }),
     new webpack.SourceMapDevToolPlugin({
       filename: '[file].map'
     })

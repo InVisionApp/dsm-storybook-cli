@@ -16,7 +16,7 @@
       "test": "NODE_ENV=test jest --config jest.config.json",
       "test-local": "docker-compose -f docker-compose.yml -f docker-compose-test.yml up",
       "lint": "eslint src",
-      "local-publish": "yalc publish --no-sig --force",
+      "local-publish": "yalc publish --yarn --no-sig --force",
       "clean-yalc": "yalc installations clean @invisionapp/dsm-storybook",
       "postupdate": "chmod +x ./node_modules/.bin/dsm-storybook"
    },
@@ -46,8 +46,8 @@
       "pkg-dir": "4.1.0",
       "prettier": "1.19.1",
       "prism-react-renderer": "1.0.2",
-      "prismjs": "1.15.0",
-      "react-docgen": "5.3.0",
+      "prismjs": "1.21.0",
+      "react-docgen": "5.3.1",
       "read-pkg": "4.0.1",
       "read-pkg-up": "4.0.0",
       "request-promise": "4.2.4",
@@ -93,6 +93,6 @@
       "webpack-cli": "3.1.2",
       "webpack-node-externals": "1.7.2",
       "webpack-shell-plugin": "0.5.0",
-      "yalc": "1.0.0-pre.27"
+      "yalc": "1.0.0-pre.45"
    }
 }

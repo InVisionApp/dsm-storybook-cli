@@ -57,7 +57,11 @@ async function publish(options, customArgs) {
     storybookDependencies: options.storybookDependencies,
     storiesMetadata: storiesMetadata,
     buildId: buildId,
-    prettierConfiguration: options.prettierConfiguration
+    prettierConfiguration: options.prettierConfiguration,
+
+    isDocsPage: options.isDocsPage,
+    hideDsmGeneratedTable: options.hideDsmGeneratedTable,
+    defaultDocsTab: options.defaultDocsTab
   };
 
   logger.progress(userMessages.updatingDsm());

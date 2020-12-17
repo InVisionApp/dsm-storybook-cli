@@ -16,7 +16,9 @@ import {
   KNOBS_SET_EVENT as DSM_KNOBS_SET_EVENT,
   INIT_DSM_REGISTERED_EVENT,
   INIT_DSM_EVENT,
-  DSM_STORYBOOK_START_EVENT
+  DSM_STORYBOOK_START_EVENT,
+  STORY_CONTENT_LOADED,
+  FRAMEWORKS
 } from './constants';
 import { optionsSettings, isLocalPreview } from './dsm-options';
 
@@ -55,6 +57,12 @@ export function registerDsm(envVariable) {
       });
 
       channel.on(HTML_SAMPLE_CODE_CHANGED_EVENT, (data) => {
+        if (getByEnvKey(environmentKeys.storybookFramework) === FRAMEWORKS.html) {
+          notifyDsm(data);
+        }
+      });
+
+      channel.on(STORY_CONTENT_LOADED, (data) => {
         notifyDsm(data);
       });
 

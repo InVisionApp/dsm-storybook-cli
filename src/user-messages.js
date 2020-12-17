@@ -102,7 +102,8 @@ const messages = {
     `More than 1 Storybook UI framework dependencies detected. You can set the UI framework you want to use explicitly inside the '.dsmrc' file or make sure only 1 '@storybook/<framework>' is inside the 'package.json' file.`,
   explicitFrameworkNotDetectedInInstalledPackages: (framework) =>
     `Failed to detect the framework '${framework}' that was provided in '.dsmrc' file. Please ensure you installed Storybook for your selected UI library correctly. See https://storybook.js.org/basics/slow-start-guide/ for details.`,
-  inDsmInitLocationError: (inDsmLevel) => `${inDsmLevel} 'in-dsm' must be initialized inside the 'parameters' property`
+  inDsmInitLocationError: (inDsmLevel) => `${inDsmLevel} 'in-dsm' must be initialized inside the 'parameters' property`,
+  decoratorStarted: () => 'The DSM Storybook integration is now running.'
 };
 
 module.exports = messages;

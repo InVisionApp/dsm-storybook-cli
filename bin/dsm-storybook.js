@@ -10,7 +10,9 @@ program
   .option('--dsm-host [host]', 'The DSM server')
   .option('--auth-token [token]', 'Key provided to you by DSM to authenticate uploads')
   .option('--story-path [glob]', 'Path to folder containing storybook stories')
-  .option('-o, --output-dir [path]', 'Path to folder to store the DSM build artifacts');
+  .option('-o, --output-dir [path]', 'Path to folder to store the DSM build artifacts')
+  .option('--default-docs-tab', 'Load the docs tab by default on web')
+  .option('--hide-dsm-generated-table', 'Hide the DSM Props Table and Sample Code on your DSM website');
 
 program
   .command('publish')
@@ -77,6 +79,7 @@ function getConfigurations() {
  * */
 function optionsFromArgs() {
   const configurationKeys = buildConfiguration.configurationKeys;
+
   return keys(configurationKeys).reduce((acc, key) => {
     if (program[key]) {
       acc[configurationKeys[key]] = program[key];

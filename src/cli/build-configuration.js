@@ -18,7 +18,9 @@ const configurationKeys = {
   dsmHost: 'dsmHost',
   authToken: 'authToken',
   storyPath: 'storyPath',
-  outputDir: 'outputDir'
+  outputDir: 'outputDir',
+  hideDsmGeneratedTable: 'hideDsmGeneratedTable',
+  defaultDocsTab: 'defaultDocsTab'
 };
 
 let loadedConfiguration = null;
@@ -56,7 +58,8 @@ function create(commandlineOptions, customArgs) {
     prettierConfiguration,
     storybookConfigPath,
     storybookConfigFolderPath,
-    isUsingDeclarativeConfiguration: isUsingDeclarativeConfiguration(storybookConfigPath)
+    isUsingDeclarativeConfiguration: isUsingDeclarativeConfiguration(storybookConfigPath),
+    isDocsPage: customArgs.includes('--docs')
   };
 
   const environmentConfiguration = loadEnvironmentVariables();
@@ -81,8 +84,22 @@ function loadEnvironmentVariables() {
 }
 
 function mergeConfigurationValues(appConfiguration, cmdConfiguration, fileConfiguration = {}, environmentConfiguration) {
-  // command line args overrides config file and environment variables
-  return Object.assign(appConfiguration, fileConfiguration, environmentConfiguration, cmdConfiguration);
+  // The below options are optional and we automatically set them to false. If the
+  // user specifies them via the command-line or dsmrc the user options will be
+  // overwrite the defaults.
+  const optionalCommandLineOptions = {
+    [configurationKeys.defaultDocsTab]: false,
+    [configurationKeys.hideDsmGeneratedTable]: false
+  };
+
+  // command line args overrides config file, default DSM options, and environment variables
+  return Object.assign(
+    appConfiguration,
+    optionalCommandLineOptions,
+    fileConfiguration,
+    environmentConfiguration,
+    cmdConfiguration
+  );
 }
 
 function get() {
@@ -99,8 +116,10 @@ function validateConfiguration() {
     process.exit(1);
   }
   let hasMissingConfiguration = false;
+
   keys(configurationKeys).map((key) => {
-    if (!loadedConfiguration[key]) {
+    const configurationKeyExists = key in loadedConfiguration;
+    if (!configurationKeyExists) {
       logger.error(userMessages.missingConfigurationKey(key));
       hasMissingConfiguration = true;
     }
