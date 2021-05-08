@@ -56,7 +56,7 @@
       "shelljs": "0.8.3",
       "shortid": "2.2.14",
       "tunnel": "0.0.6",
-      "url-parse": "1.4.7",
+      "url-parse": "1.5.0",
       "vue-docgen-api": "3.11.4"
    },
    "peerDependencies": {
