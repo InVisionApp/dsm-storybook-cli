@@ -90,7 +90,7 @@
       "superagent": "5.1.0",
       "unzipper": "0.10.1",
       "webpack": "4.28.2",
-      "webpack-cli": "3.1.2",
+      "webpack-cli": "3.3.12",
       "webpack-node-externals": "1.7.2",
       "webpack-shell-plugin": "0.5.0",
       "yalc": "1.0.0-pre.45"
