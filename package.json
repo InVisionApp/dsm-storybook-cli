@@ -78,7 +78,7 @@
       "child_process": "1.0.2",
       "codecov": "3.3.0",
       "css-loader": "2.0.2",
-      "danger": "10.4.0",
+      "danger": "11.2.6",
       "deep-equal-in-any-order": "1.0.13",
       "eslint": "6.8.0",
       "eslint-plugin-react": "7.18.0",
