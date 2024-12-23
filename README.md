@@ -1,3 +1,7 @@
+| :warning: This project is no longer actively supported.
+| ---
+
+
 # DSM Storybook CLI
 
 [![](https://badge.fury.io/js/%40invisionapp%2Fdsm-storybook.svg)](https://www.npmjs.com/package/@invisionapp/dsm-storybook)
